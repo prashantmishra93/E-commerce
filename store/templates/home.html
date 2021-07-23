@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block head %} {% endblock head %}
+
+{% block title %} Home {% endblock title %}
+
+{% block content %}
+
+    {% load cart %}
+    <form method="GET" action="#">
+        {% csrf_token %}
+        <div class="container-fluid mt-3">
+            <div class="row">
+                <!-- all filter sidebar -->
+                <div class="col-lg-3 mx-auto"> <!-- it is define where we want same space if we define this before main content that create right side otherwise left -->
+                    <div class="list-group">
+                        <a href="/" class="list-group-item list-group-item-action">All Product</a>
+                        {% for category in categories %}
+                        <a href="/?category={{category.id}}" class="list-group-item list-group-item-action">{{category.name}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- all product -->
+                <div id="product" class="col-lg-8 mx-auto">     <!-- col-lg- it means display create same space for side bar automatic -->
+                    <div class="row mx-auto">
+                        {% for product in products %}
+                            <div class="card mx-auto mb-3" id="{{product.id}}" style="width: 18rem;">
+                                <img src="{{product.image.url}}" class="card-img-top mt-2" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{product.name}}</h5>
+                                    <p class="card-text">Rs. {{product.price}}</p>
+                                    <!--{{product | is_in_cart:request.session.cart }}-->
+                                </div>
+                                <div class="card-footer p-0 row no-gutters">
+                                    {% if product|is_in_cart:request.session.cart %}
+                                    <div class="row no-gutters">
+                                        <form method="POST" class="col-2" action="/#{{product.id}}">
+                                            {% csrf_token %}
+                                            <input hidden type="text" name="product" value="{{product.id}}">
+                                            <input hidden type="text" name="remove" value="True">
+                                            <input type="submit" value=" - " class="btn btn-block btn-secondary">
+                                        </form>
+                                        <div class="text-center col">{{product|cart_quantity:request.session.cart}} in cart</div>
+                                        <form method="POST" class="col-2" action="/#{{product.id}}">
+                                            {% csrf_token %}
+                                            <input hidden type="text" name="product" value="{{product.id}}">
+                                            <input type="submit" value=" + " class="btn btn-block btn-secondary">
+                                        </form>
+                                    </div>
+                                    {% else %}
+                                    <form action="/#{{product.id}}" method="POST" class="btn-block">
+                                        {% csrf_token %}
+                                        <input hidden type="text" name="product" value="{{product.id}}">
+                                        <input type="submit" class="float-right btn-primary btn-sm" value="Add to Cart">
+                                    </form>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

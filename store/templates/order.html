@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block head %} {% endblock head %}
+
+{% block title %} Home {% endblock title %}
+
+{% block content %}
+
+{% load custom_filter %}
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <p class="display-4 pl-2 ml-2">Your Orders</p>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sno.</th>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orders in order %}
+                <tr>
+                    <td>{{forloop.counter}}</td>               <!-- it is use for show Sr. no. by counting of loop -->
+                    <td><img style="height:80px;" src="{{orders.product.image.url}}" class="rounded-circle"></td>
+                    <td>{{orders.product.name}}</td>
+                    <td>{{orders.date}}</td>
+                    <td>{{orders.price|currency}}</td>
+                    <td>{{orders.quantity}}</td>
+                    <td>{{orders.quantity|multiply:order.price|currency}}</td>
+                    {% if orders.status %}
+                        <td><small class="badge badge-success">Completed</small></td>
+                    {% else %}
+                        <td><small class="badge badge-warning">Pending</small></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}
